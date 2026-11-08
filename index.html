@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>萬卷樓編輯部出版工作流程單</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            background-color: #f3f4f6;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Input styling to look like fillable blanks */
+        .blank-input {
+            border: none;
+            border-bottom: 1px solid #555;
+            background-color: transparent;
+            outline: none;
+            padding: 0 4px;
+            font-family: inherit;
+            font-size: inherit;
+            color: #1f2937;
+        }
+        
+        .blank-input:focus {
+            border-bottom: 2px solid #000;
+        }
+
+        /* Table structural styling */
+        .workflow-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #374151; /* Darker outer border */
+            margin-bottom: 1.5rem;
+        }
+
+        .workflow-table th, .workflow-table td {
+            border: 1px solid #374151;
+            padding: 0.5rem;
+            vertical-align: top;
+        }
+
+        .col-header {
+            background-color: #d1d5db; /* Light gray */
+            width: 60px;
+            text-align: center;
+            vertical-align: middle;
+            font-weight: bold;
+            color: #374151;
+            letter-spacing: 0.2em;
+        }
+
+        .col-checklist {
+            width: 120px;
+            font-size: 0.875rem;
+        }
+
+        /* Custom inner grid for specific rows */
+        .inner-grid-border {
+            margin: -0.5rem; /* Offset padding to make borders flush */
+        }
+        
+        .inner-cell {
+            padding: 0.5rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.25rem;
+            cursor: pointer;
+            margin-bottom: 0.25rem;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            margin-top: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sync Status -->
+    <div id="syncStatus" class="fixed top-4 right-4 bg-white px-4 py-2 rounded-full shadow-md border border-gray-200 flex items-center gap-2 z-50 transition-all font-bold text-sm text-gray-500">
+        ⚪ 準備連線...
+    </div>
+
+    <div class="form-container">
+
+        <!-- Top Header Section -->
+        <div class="flex justify-between items-end mb-4">
+            <h1 class="text-3xl font-bold tracking-widest text-gray-800">萬卷樓編輯部出版工作流程單</h1>
+            <div class="text-sm font-medium text-gray-600">
+                檔案編號: <input type="text" class="blank-input w-48" placeholder=""> 號
+            </div>
+        </div>
+
+        <!-- Main Table -->
+        <table class="workflow-table">
+            <tbody>
+                <!-- Row 1: 類別 -->
+                <tr>
+                    <td class="col-header">類別</td>
+                    <td class="p-0">
+                        <!-- Remove padding for precise internal layout -->
+                        <div class="flex h-full items-stretch">
+                            <div class="flex items-center gap-4 px-2 py-1 flex-grow">
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox"> 初版</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox"> 再版</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox"> 再刷</label>
+                                <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox"> 其他</label>
+                            </div>
+                            <div class="flex border-l border-gray-700">
+                                <div class="bg-gray-300 px-3 py-1 flex items-center border-r border-gray-700 font-bold text-gray-700 text-sm">日期</div>
+                                <div class="px-2 py-1 flex items-center text-sm">
+                                    <input type="text" class="blank-input w-8 text-center"> 年
+                                    <input type="text" class="blank-input w-8 text-center ml-1"> 月
+                                    <input type="text" class="blank-input w-8 text-center ml-1"> 日
+                                </div>
+                            </div>
+                            <div class="flex border-l border-gray-700">
+                                <div class="bg-gray-300 px-3 py-1 flex items-center border-r border-gray-700 font-bold text-gray-700 text-sm">承辦人</div>
+                                <div class="px-2 py-1 flex items-center text-sm">
+                                    <input type="text" class="blank-input w-20">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 書籍資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 2: 書名 -->
+                <tr>
+                    <td class="col-header">書名</td>
+                    <td>
+                        <div class="flex items-center mb-1">
+                            <span class="mr-2 whitespace-nowrap text-sm">書系:</span>
+                            <input type="text" class="blank-input flex-grow">
+                        </div>
+                        <div class="flex items-center">
+                            <span class="mr-2 whitespace-nowrap text-sm">書名:</span>
+                            <input type="text" class="blank-input flex-grow">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 稿件簽收</label>
+                        <label class="checkbox-label"><input type="checkbox"> 作者資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 3: 作者 -->
+                <tr>
+                    <td class="col-header">作者</td>
+                    <td class="align-middle">
+                        <input type="text" class="blank-input w-full">
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 紙本授權</label>
+                        <label class="checkbox-label"><input type="checkbox"> 數位授權</label>
+                        <label class="checkbox-label"><input type="checkbox"> 版權貿易</label>
+                    </td>
+                </tr>
+
+                <!-- Row 4: 合約 -->
+                <tr>
+                    <td class="col-header">合約</td>
+                    <td class="text-sm leading-relaxed">
+                        <div class="flex items-center mb-1 flex-wrap">
+                            <label class="flex items-center mr-2"><input type="checkbox" class="mr-1"> 版稅贈書:</label>
+                            版稅率 <input type="text" class="blank-input w-16 mx-1">,
+                            贈書率 <input type="text" class="blank-input w-16 mx-1">,
+                            起算印量 <input type="text" class="blank-input w-24 mx-1">
+                        </div>
+                        <div class="flex items-center mb-1 flex-wrap">
+                            <label class="flex items-center mr-2"><input type="checkbox" class="mr-1"> 作者自購:</label>
+                            折扣 <input type="text" class="blank-input w-16 mx-1">,
+                            冊數 <input type="text" class="blank-input w-16 mx-1">
+                        </div>
+                        <div class="flex items-center mb-1 flex-wrap">
+                            <label class="flex items-center mr-2"><input type="checkbox" class="mr-1"> 自費出版:</label>
+                            費用 <input type="text" class="blank-input w-32 mx-1">,
+                            贈書 <input type="text" class="blank-input w-16 mx-1">
+                        </div>
+                        <div class="flex items-center mb-1">
+                            授權期間: <input type="text" class="blank-input flex-grow ml-1">
+                        </div>
+                        <div class="flex items-center text-gray-600 text-xs mt-1">
+                            銷貨/出庫單號 (如有刷卡單、發票，請檢附): <input type="text" class="blank-input flex-grow ml-1 text-sm text-gray-800">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 估報價單</label>
+                        <label class="checkbox-label"><input type="checkbox"> 銷出庫單</label>
+                    </td>
+                </tr>
+
+                <!-- Row 5: 審查 -->
+                <tr>
+                    <td class="col-header">審查</td>
+                    <td class="p-0">
+                        <div class="flex h-full inner-grid-border">
+                            <div class="w-24 border-r border-gray-700 p-2 flex flex-col justify-center">
+                                <label class="checkbox-label"><input type="checkbox"> 內審</label>
+                                <label class="checkbox-label mt-2"><input type="checkbox"> 外審</label>
+                            </div>
+                            <div class="flex-grow flex flex-col text-sm">
+                                <div class="p-2 border-b border-gray-700 flex-grow flex items-center">
+                                    <span class="w-20">審查委員 1:</span> <input type="text" class="blank-input flex-grow">
+                                </div>
+                                <div class="p-2 border-b border-gray-700 flex-grow flex items-center">
+                                    <span class="w-20">審查委員 2:</span> <input type="text" class="blank-input flex-grow">
+                                </div>
+                                <div class="p-2 flex-grow flex items-center">
+                                    <span class="w-20">審查委員 3:</span> <input type="text" class="blank-input flex-grow">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 審查證明</label>
+                        <label class="checkbox-label"><input type="checkbox"> 審查意見</label>
+                        <label class="checkbox-label"><input type="checkbox"> 審查領據</label>
+                        <label class="checkbox-label"><input type="checkbox"> 作者資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 6: 打字 -->
+                <tr>
+                    <td class="col-header">打字</td>
+                    <td class="align-middle text-sm text-gray-500">
+                        <div class="flex items-center w-full">
+                            <span class="mr-1 whitespace-nowrap">廠商 / 單價 / 實際費用:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 打字檔案</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 7: 體例 -->
+                <tr>
+                    <td class="col-header">體例</td>
+                    <td class="align-middle text-sm text-gray-500">
+                        <div class="flex items-center w-full">
+                            <span class="mr-1 whitespace-nowrap">廠商 / 單價 / 實際費用:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 體例檔案</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 8: 排版 -->
+                <tr>
+                    <td class="col-header">排版</td>
+                    <td class="align-middle text-sm text-gray-500">
+                        <div class="flex items-center w-full flex-wrap">
+                            <span class="mr-1">廠商 / 單價 / 制式版型 / 重新設計 / 開本 / 直排橫排 / 其他 / <span class="font-bold text-gray-700">實際費用:</span></span>
+                            <input type="text" class="blank-input flex-grow min-w-[200px] text-gray-800 mt-1">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 排版檔案</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 9: 校對 -->
+                <tr>
+                    <td class="col-header">校對</td>
+                    <td class="align-middle text-sm text-gray-500">
+                        <div class="flex items-center w-full">
+                            <span class="mr-1 whitespace-nowrap">廠商 / 費用 / 實際費用:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 10: 封面 -->
+                <tr>
+                    <td class="col-header">封面</td>
+                    <td class="align-middle text-sm text-gray-500">
+                        <div class="flex items-center w-full flex-wrap">
+                            <span class="mr-1">廠商 / 費用 / 重新、延伸設計 / 精裝平裝 / 直排橫排 / 折口 / 其他 / <span class="font-bold text-gray-700">實際費用:</span></span>
+                            <input type="text" class="blank-input flex-grow min-w-[200px] text-gray-800 mt-1">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 封面檔案</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 11: 印刷 -->
+                <tr>
+                    <td class="col-header">印刷</td>
+                    <td class="text-sm text-gray-500 leading-relaxed">
+                        <div class="flex items-center mb-1 w-full">
+                            <span class="mr-1 whitespace-nowrap">廠商 / 印量 / 開本 / 厚度 / 精裝平裝 / 穿線膠裝:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                        <div class="flex items-center mb-1 w-full">
+                            <span class="mr-1 whitespace-nowrap">封面 / 紙張 / 磅數 / 彩印 / 折口 / 特效 / 裝裱:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                        <div class="flex items-center mb-1 w-full">
+                            <span class="mr-1 whitespace-nowrap">扉頁 / 紙張 / 磅數 / 張數:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                        <div class="flex items-center mb-1 w-full">
+                            <span class="mr-1 whitespace-nowrap">內頁 / 紙張 / 磅數 / 黑白 / 頁數:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                        <div class="flex items-center mb-1 w-full">
+                            <span class="mr-1 whitespace-nowrap">內頁 / 紙張 / 磅數 / 彩色 / 頁數:</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                        <div class="flex items-center mt-2 w-full text-gray-600">
+                            <span class="mr-1 whitespace-nowrap">定價 : 頁數*1.4取十位偶數整數，特殊定價除外。</span>
+                            <input type="text" class="blank-input flex-grow text-gray-800">
+                        </div>
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 內文檔案</label>
+                        <label class="checkbox-label"><input type="checkbox"> 封面檔案</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 出貨單</label>
+                    </td>
+                </tr>
+
+                <!-- Row 12: 其他 -->
+                <tr>
+                    <td class="col-header bg-gray-100">其他</td>
+                    <td class="align-top text-sm">
+                        <div class="flex items-center w-full mb-1 font-bold text-gray-700">運費</div>
+                        <input type="text" class="blank-input w-full">
+                    </td>
+                    <td class="col-checklist">
+                        <label class="checkbox-label"><input type="checkbox"> 報價資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 請款資料</label>
+                        <label class="checkbox-label"><input type="checkbox"> 其他資料</label>
+                    </td>
+                </tr>
+
+                <!-- Row 13: 書訊 -->
+                <tr>
+                    <td class="col-header bg-gray-300">書訊</td>
+                    <td class="align-middle text-sm text-gray-700">
+                        後臺資料、書訊 doc.、書訊 pdf.、封面 300dpi、封底 300dpi、展頁 pdf、國文天地廣告
+                    </td>
+                    <td class="col-checklist align-middle">
+                        <label class="checkbox-label m-0"><input type="checkbox"> 主管確認</label>
+                    </td>
+                </tr>
+
+                <!-- Row 14: 其他 (Bottom) -->
+                <tr>
+                    <td class="col-header bg-gray-100">其他</td>
+                    <td class="align-middle text-sm text-gray-700">
+                        版權頁、點檢表、簽收單、編輯部用書、國圖送存書
+                    </td>
+                    <td class="col-checklist align-middle">
+                        <label class="checkbox-label m-0"><input type="checkbox"> 主管確認</label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Bottom Signatures -->
+        <div class="flex justify-between items-center px-4 mt-8 text-sm font-medium text-gray-700">
+            <div class="flex items-center">
+                <span class="mr-2">編輯:</span>
+                <input type="text" class="blank-input w-32">
+            </div>
+            <div class="flex items-center">
+                <span class="mr-2">主編:</span>
+                <input type="text" class="blank-input w-32">
+            </div>
+            <div class="flex items-center">
+                <span class="mr-2">總編輯:</span>
+                <input type="text" class="blank-input w-32">
+            </div>
+            <div class="flex items-center">
+                <span class="mr-2">歸檔:</span>
+                <input type="text" class="blank-input w-32">
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 環境變數設定 (由平台提供)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            // 預設空設定，防止在沒有環境變數時報錯
+            apiKey: "mock-key", projectId: "mock-project"
+        };
+
+        const statusEl = document.getElementById('syncStatus');
+
+        function updateSyncStatus(text, colorClass) {
+            statusEl.textContent = text;
+            statusEl.className = `fixed top-4 right-4 bg-white px-4 py-2 rounded-full shadow-md border border-gray-200 flex items-center gap-2 z-50 transition-all font-bold text-sm ${colorClass}`;
+        }
+
+        let app, db, auth, docRef;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            // 設定共用資料的文檔路徑 (遵循嚴格路徑規範)
+            docRef = doc(db, 'artifacts', appId, 'public', 'data', 'forms', 'workflow_data');
+        } catch (error) {
+            console.error("Firebase 初始化失敗:", error);
+            updateSyncStatus('❌ 系統設定錯誤', 'text-red-500');
+        }
+
+        // 防抖函數 (避免文字輸入時過度頻繁寫入資料庫)
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // 為所有 input 賦予唯一的 ID 並綁定事件
+        function setupInputs() {
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach((input, index) => {
+                // 賦予唯一識別碼
+                if (!input.id) input.id = 'field_' + index;
+
+                // 文字框使用 input 事件 + 防抖
+                if (input.type === 'text') {
+                    input.addEventListener('input', debounce((e) => {
+                        saveFieldToCloud(e.target);
+                    }, 600)); // 停止打字 0.6 秒後自動儲存
+                }
+
+                // 核取方塊使用 change 事件 (立即儲存)
+                if (input.type === 'checkbox') {
+                    input.addEventListener('change', (e) => {
+                        saveFieldToCloud(e.target);
+                    });
+                }
+            });
+        }
+
+        async function saveFieldToCloud(input) {
+            if (!auth || !auth.currentUser) return;
+
+            updateSyncStatus('🔄 同步中...', 'text-yellow-600');
+            const key = input.id;
+            const val = input.type === 'checkbox' ? input.checked : input.value;
+
+            try {
+                // 使用 merge: true 只更新有變動的欄位，保留其他欄位不變
+                await setDoc(docRef, { [key]: val }, { merge: true });
+            } catch (error) {
+                console.error("儲存失敗:", error);
+                updateSyncStatus('❌ 儲存失敗', 'text-red-500');
+            }
+        }
+
+        // 監聽雲端資料變更並更新畫面
+        function setupRealtimeListener() {
+            updateSyncStatus('連線中...', 'text-blue-500');
+
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+
+                    document.querySelectorAll('input').forEach(input => {
+                        const val = data[input.id];
+                        if (val !== undefined) {
+                            if (input.type === 'checkbox') {
+                                input.checked = val;
+                            } else if (input.type === 'text') {
+                                // 只有當使用者「不在」輸入該欄位時才更新，避免游標亂跳
+                                if (document.activeElement !== input) {
+                                    input.value = val;
+                                }
+                            }
+                        }
+                    });
+                }
+                updateSyncStatus('✅ 已同步至雲端', 'text-green-600');
+            }, (error) => {
+                console.error("監聽錯誤:", error);
+                updateSyncStatus('❌ 連線中斷', 'text-red-500');
+            });
+        }
+
+        // 初始化應用程式
+        async function initApp() {
+            if (!auth) return;
+
+            setupInputs();
+            updateSyncStatus('🔐 驗證身分中...', 'text-blue-500');
+
+            try {
+                // 優先使用平台提供的驗證 Token
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                setupRealtimeListener();
+            } catch (error) {
+                console.error("登入失敗:", error);
+                updateSyncStatus('❌ 驗證失敗', 'text-red-500');
+            }
+        }
+
+        // 當網頁載入完成後啟動
+        window.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+    <script type="module">
+        // 載入 Firebase 套件
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // TODO: 將這裡面的內容替換成您剛剛在 Firebase 複製的金鑰
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZHXJCAkJoA9CRnfF2CloDxnR-_5PcDbI",
+            authDomain: "universal-explantion.firebaseapp.com",
+            databaseURL: "https://universal-explantion-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "universal-explantion",
+            storageBucket: "universal-explantion.firebasestorage.app",
+            messagingSenderId: "499342522987",
+            appId: "1:499342522987:web:400c451d5b947398cf4f2e"
+        };
+
+        // 初始化連線
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 測試連線是否成功
+        console.log("Firebase 設定已載入");
+    </script>
+</body>
+</html>
