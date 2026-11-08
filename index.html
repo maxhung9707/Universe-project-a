@@ -414,16 +414,21 @@
 
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+   <script type="module">
+        // 載入正確的 Firebase Realtime Database 模組
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // 環境變數設定 (由平台提供)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            // 預設空設定，防止在沒有環境變數時報錯
-            apiKey: "mock-key", projectId: "mock-project"
+        // 這是您專屬的正確金鑰
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZHXJCAkJoA9CRnfF2CloDxnR-_5PcDbI",
+            authDomain: "universal-explantion.firebaseapp.com",
+            databaseURL: "https://universal-explantion-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "universal-explantion",
+            storageBucket: "universal-explantion.firebasestorage.app",
+            messagingSenderId: "499342522987",
+            appId: "1:499342522987:web:7bfcdc0c3471b5facf4f2e"
         };
 
         const statusEl = document.getElementById('syncStatus');
@@ -433,18 +438,7 @@
             statusEl.className = `fixed top-4 right-4 bg-white px-4 py-2 rounded-full shadow-md border border-gray-200 flex items-center gap-2 z-50 transition-all font-bold text-sm ${colorClass}`;
         }
 
-        let app, db, auth, docRef;
-
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            // 設定共用資料的文檔路徑 (遵循嚴格路徑規範)
-            docRef = doc(db, 'artifacts', appId, 'public', 'data', 'forms', 'workflow_data');
-        } catch (error) {
-            console.error("Firebase 初始化失敗:", error);
-            updateSyncStatus('❌ 系統設定錯誤', 'text-red-500');
-        }
+        let app, db, auth;
 
         // 防抖函數 (避免文字輸入時過度頻繁寫入資料庫)
         function debounce(func, wait) {
@@ -459,17 +453,14 @@
         function setupInputs() {
             const inputs = document.querySelectorAll('input');
             inputs.forEach((input, index) => {
-                // 賦予唯一識別碼
                 if (!input.id) input.id = 'field_' + index;
 
-                // 文字框使用 input 事件 + 防抖
                 if (input.type === 'text') {
                     input.addEventListener('input', debounce((e) => {
                         saveFieldToCloud(e.target);
-                    }, 600)); // 停止打字 0.6 秒後自動儲存
+                    }, 600));
                 }
 
-                // 核取方塊使用 change 事件 (立即儲存)
                 if (input.type === 'checkbox') {
                     input.addEventListener('change', (e) => {
                         saveFieldToCloud(e.target);
@@ -478,16 +469,15 @@
             });
         }
 
+        // 儲存資料到 Realtime Database
         async function saveFieldToCloud(input) {
             if (!auth || !auth.currentUser) return;
-
             updateSyncStatus('🔄 同步中...', 'text-yellow-600');
             const key = input.id;
             const val = input.type === 'checkbox' ? input.checked : input.value;
 
             try {
-                // 使用 merge: true 只更新有變動的欄位，保留其他欄位不變
-                await setDoc(docRef, { [key]: val }, { merge: true });
+                await update(ref(db, 'workflow_data'), { [key]: val });
             } catch (error) {
                 console.error("儲存失敗:", error);
                 updateSyncStatus('❌ 儲存失敗', 'text-red-500');
@@ -497,11 +487,10 @@
         // 監聽雲端資料變更並更新畫面
         function setupRealtimeListener() {
             updateSyncStatus('連線中...', 'text-blue-500');
-
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-
+            
+            onValue(ref(db, 'workflow_data'), (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
                     document.querySelectorAll('input').forEach(input => {
                         const val = data[input.id];
                         if (val !== undefined) {
@@ -525,18 +514,21 @@
 
         // 初始化應用程式
         async function initApp() {
-            if (!auth) return;
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getDatabase(app);
+                auth = getAuth(app);
+            } catch (error) {
+                console.error("Firebase 初始化失敗:", error);
+                updateSyncStatus('❌ 系統設定錯誤', 'text-red-500');
+                return;
+            }
 
             setupInputs();
             updateSyncStatus('🔐 驗證身分中...', 'text-blue-500');
 
             try {
-                // 優先使用平台提供的驗證 Token
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                await signInAnonymously(auth);
                 setupRealtimeListener();
             } catch (error) {
                 console.error("登入失敗:", error);
@@ -544,33 +536,7 @@
             }
         }
 
-        // 當網頁載入完成後啟動
         window.addEventListener('DOMContentLoaded', initApp);
-
     </script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBZHXJCAkJoA9CRnfF2CloDxnR-_5PcDbI",
-    authDomain: "universal-explantion.firebaseapp.com",
-    databaseURL: "https://universal-explantion-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "universal-explantion",
-    storageBucket: "universal-explantion.firebasestorage.app",
-    messagingSenderId: "499342522987",
-    appId: "1:499342522987:web:7bfcdc0c3471b5facf4f2e",
-    measurementId: "G-GS3FLBZP5K"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 </body>
 </html>
